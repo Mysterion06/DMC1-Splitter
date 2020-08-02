@@ -8,6 +8,7 @@ state("dmc1")
     int RS: 0x452AA14;
     int menu: 0x5eab88, 0x2a10;
     int loadingStatus : 0x5eab88, 0x2780;
+    int m23: 0x4CB3914;
 }
 
 init
@@ -44,6 +45,10 @@ split
     //     }
     // }
     if(current.loadingStatus == 4 && old.loadingStatus != 4){
+        return true;
+    }
+    
+    if(current.m23 == 0 && old.m23 == 65537 && current.roomID == 65501){
         return true;
     }
 }
