@@ -20,7 +20,7 @@ init
 
 startup
 {
-    settings.Add("Doorsplitter", false, "DoorSplitter (Currently under progress, untick this)");
+    settings.Add("Doorsplitter", false, "DoorSplitter");
     settings.CurrentDefaultParent = "Doorsplitter";
     settings.Add("Dante/SuperDante");
     settings.Add("Legendary Dark Knight (Do not use, still under work)");
