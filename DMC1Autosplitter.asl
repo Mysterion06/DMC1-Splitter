@@ -318,15 +318,3 @@ reset
     }
 }
 
-isLoading
-{
-    //Stop the timer when entering the menu and being on one of the 5 possible menu selections
-    if(current.pause == 1 || current.pause == 257 || current.pause == 513 || current.pause == 769 || current.pause == 1025){
-        return true;
-    }
-    else{
-        return false;
-    }
-}
-
-
