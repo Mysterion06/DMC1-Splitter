@@ -22,7 +22,7 @@ startup
 {
     settings.Add("NoSF", false, "ONLY tick this if you play without savefile");
 
-    settings.Add("Doorsplitter", false, "DoorSplitter (Currently under progress, untick this)");
+    settings.Add("Doorsplitter", false, "DoorSplitter");
     settings.CurrentDefaultParent = "Doorsplitter";
     settings.Add("Dante/SuperDante");
     settings.Add("Legendary Dark Knight (Do not use, still under work)");
@@ -36,7 +36,8 @@ start
         vars.chapter = 0;
         return true;
     }
-
+    
+    //Starts the timer if you play without a savefile
     if(current.menu != 517 && old.menu == 517 && settings["NoSF"]){
         return true;
     }
