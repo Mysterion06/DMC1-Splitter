@@ -556,13 +556,15 @@ split
         (current.roomID == 8964 && vars.split == 107)
         //Chapter 23 v2
         ||
-        (current.roomID == 42288 && vars.split == 108)
+        (current.roomID == 1024 && vars.split == 108)
         ||
-        (current.roomID == 62471 && vars.split == 109)
+        (current.roomID == 42288 && vars.split == 109)
         ||
-        (current.roomID == 30217 && vars.split == 110)
+        (current.roomID == 62471 && vars.split == 110)
         ||
-        (current.roomID == 50818 && vars.split == 111)){
+        (current.roomID == 30217 && vars.split == 111)
+        ||
+        (current.roomID == 50818 && vars.split == 112)){
             vars.split++;
             return true;
         }
