@@ -3,13 +3,11 @@
 
 state("dmc1")
 {
-    int LoadingScreen: 0x28965D8;                   //Loadingscreen when opening the menu or when going through doors
-    ushort roomID: 0x5eab88, 0x56e1830;
-    int RS: 0x452AA14;
-    int menu: 0x5eab88, 0x2a10;
-    int loadingStatus: 0x5eab88, 0x2780;
-    int m23: 0x4CB3914;
-    int pause: 0x4CB3034;
+    ushort roomID:      0x5eab88, 0x56e1830;         //The roomID's of the game
+    int menu:           0x5eab88, 0x2a10;            //When you are in the menu, used to reset the splitter or start the splitter
+    int loadingStatus:  0x5eab88, 0x2780;            //A status that shows in what position of the game you are in, used to split Chapters
+    int cutscene:       0x4CB3914;                   //Jumps up to 65537 when a cutscene is played, used to frame perfect split M23    
+    int pause:          0x4CB3034;                   //5 different Values to show that the game is paused, can be used to stop the timer upon pausing
 }
 
 init
@@ -50,7 +48,7 @@ split
     }
     
     //M23 frame perfect split
-    if(current.m23 == 0 && old.m23 == 65537 && current.roomID == 65501 || current.m23 == 0 && old.m23 == 65537 && current.roomID == 562){
+    if(current.cutscene == 0 && old.cutscene == 65537 && current.roomID == 65501 || current.cutscene == 0 && old.cutscene == 65537 && current.roomID == 562){
         return true;
     }    
     
