@@ -5,15 +5,11 @@ state("dmc1")
 {
     ushort roomID:      0x5eab88, 0x56e1830;         //The roomID's of the game
     int menu:           0x5eab88, 0x2a10;            //When you are in the menu, used to reset the splitter or start the splitter
-    int loadingStatus:  0x5eab88, 0x2780;            //A status that shows in what position of the game you are in, used to split Chapters
+    byte loadingStatus: 0x5eab88, 0x2780;            //A status that shows in what position of the game you are in, used to split Chapters
+    byte paused:        0x5EAB88, 0x0c;
     int cutscene:       0x4CB3914;                   //Jumps up to 65537 when a cutscene is played, used to frame perfect split M23    
     int pause:          0x4CB3034;                   //5 different Values to show that the game is paused, can be used to stop the timer upon pausing
-}
-
-init
-{
-    vars.split = 0;
-    vars.chapter = 0;
+    byte loadingScreen: 0x3F533A0;
 }
 
 startup
@@ -22,8 +18,301 @@ startup
 
     settings.Add("Doorsplitter", false, "DoorSplitter");
     settings.CurrentDefaultParent = "Doorsplitter";
-    settings.Add("Dante/SuperDante");
-    settings.Add("Legendary Dark Knight");
+    settings.Add("DSD", false, "Dante/SuperDante");
+    settings.Add("LDK", false, "Legendary Dark Knight");
+}
+
+init
+{
+    vars.split = 0;
+
+    vars.doorSplitDSD = new List<Tuple<int, int>>{
+        //Mission 1
+        Tuple.Create(56356, 1);
+        Tuple.Create(8886, 2);
+        Tuple.Create(56356, 3);
+        Tuple.Create(7684, 4);
+        Tuple.Create(0, 5);
+        Tuple.Create(46, 6);
+        Tuple.Create(0, 7);
+        //Mission 2
+        Tuple.Create(1152, 8);
+        Tuple.Create(7172, 9);
+        Tuple.Create(512, 10);
+        Tuple.Create(9221, 11);
+        Tuple.Create(1152, 12);
+        Tuple.Create(7172, 13);
+        //Mission 3
+        Tuple.Create(59282, 14);
+        Tuple.Create(35340, 15);
+        Tuple.Create(59282, 16);
+        Tuple.Create(22, 17);
+        //Mission 4
+        Tuple.Create(512, 18);
+        Tuple.Create(0, 19);
+        Tuple.Create(32768, 20);
+        Tuple.Create(7848, 21);
+        //Mission 5
+        Tuple.Create(32768, 22);
+        Tuple.Create(0, 23);
+        //Mission 6
+        Tuple.Create(42436, 24);
+        Tuple.Create(8192, 25);
+        Tuple.Create(2390, 26);
+        //Mission 7
+        Tuple.Create(8192, 27);
+        Tuple.Create(0, 28);
+        Tuple.Create(32768, 29);
+        //Pre Mission 8
+        Tuple.Create(12036, 30);
+        //Mission 8
+        Tuple.Create(46256, 31);
+        Tuple.Create(27339, 32);
+        Tuple.Create(65295, 33);
+        Tuple.Create(8886, 34);
+        Tuple.Create(56356, 35);
+        //Mission 9
+        Tuple.Create(12292, 36);
+        Tuple.Create(2346, 37);
+        Tuple.Create(12292, 38);
+        Tuple.Create(60608, 39);
+        Tuple.Create(13317, 40);
+        //Mission 10
+        Tuple.Create(46336, 41);
+        //Mission 11
+        Tuple.Create(256, 42);
+        Tuple.Create(47224, 43);
+        Tuple.Create(256, 44);
+        Tuple.Create(47224, 45);
+        Tuple.Create(4088, 46);
+        //Mission 12
+        Tuple.Create(0, 47);
+        Tuple.Create(9732, 48);
+        Tuple.Create(51276, 49);
+        Tuple.Create(504, 50);
+        //Mission 13
+        Tuple.Create(17584, 51);
+        Tuple.Create(64928, 52);
+        Tuple.Create(7856, 53);
+        //Pre Mission 14
+        Tuple.Create(20896, 54);
+        //Mission 14
+        Tuple.Create(22477, 55);
+        Tuple.Create(6919, 56);
+        Tuple.Create(4, 57);
+        //Mission 15
+        Tuple.Create(15023, 58);
+        Tuple.Create(4, 59);
+        Tuple.Create(15023, 60);
+        Tuple.Create(64345, 61);
+        Tuple.Create(45072, 62);
+        Tuple.Create(4, 63);
+        //Mission 16
+        Tuple.Create(45072, 64);
+        Tuple.Create(64345, 65);
+        Tuple.Create(0, 66);
+        Tuple.Create(34784, 67);
+        Tuple.Create(36414, 68);
+        Tuple.Create(27539, 69);
+        Tuple.Create(27008, 70);
+        Tuple.Create(7685, 71);
+        Tuple.Create(25896, 72);
+        //Mission 17
+        Tuple.Create(256, 73);
+        Tuple.Create(39338, 74);
+        Tuple.Create(4870, 75);
+        Tuple.Create(26805, 76);
+        Tuple.Create(4870, 77);
+        Tuple.Create(4454, 78);
+        //Mission 18
+        Tuple.Create(256, 79);
+        Tuple.Create(27403, 80);
+        Tuple.Create(256, 81);
+        Tuple.Create(21568, 82);
+        Tuple.Create(23448, 83);
+        //Mission 19
+        Tuple.Create(256, 84);
+        Tuple.Create(57320, 85);
+        Tuple.Create(24896, 86);
+        Tuple.Create(39700, 87);
+        Tuple.Create(4442, 88);
+        Tuple.Create(18184, 89);
+        Tuple.Create(4442, 90);
+        Tuple.Create(39700, 91);
+        Tuple.Create(24896, 92);
+        Tuple.Create(7685, 93);
+        Tuple.Create(8964, 94);
+        //Mission 20
+        Tuple.Create(20408, 95);
+        //Mission 21
+        Tuple.Create(52440, 96);
+        Tuple.Create(552, 97);
+        Tuple.Create(64483, 98);
+        Tuple.Create(14842, 99);
+        Tuple.Create(52440, 100);
+        //Mission 22
+        Tuple.Create(256, 101);
+        //Mission 23
+        Tuple.Create(52440, 102);
+        Tuple.Create(552, 103);
+        Tuple.Create(20408, 104);
+        Tuple.Create(1398, 105);
+        Tuple.Create(8964, 106);
+        //Mission 23 v2
+        Tuple.Create(7685, 107);
+        Tuple.Create(27008, 108);
+        Tuple.Create(27539, 109);
+        Tuple.Create(3080, 110);
+        Tuple.Create(33843, 111);
+    };
+
+    vars.doorSplitLDK = new List<Tuple<int, int>>{
+        //Mission 1
+        Tuple.Create(1408, 1);
+        Tuple.Create(43792, 2);
+        Tuple.Create(1408, 3);
+        Tuple.Create(12550, 4);
+        Tuple.Create(3998, 5);
+        Tuple.Create(12552, 6);
+        Tuple.Create(3998, 7);
+        //Mission 2
+        Tuple.Create(1152, 8);
+        Tuple.Create(7684, 9);
+        Tuple.Create(33960, 10);
+        Tuple.Create(10757, 11);
+        Tuple.Create(1152, 12);
+        Tuple.Create(7684, 13);
+        //Mission 3
+        Tuple.Create(28664, 14);
+        Tuple.Create(57344, 15);
+        Tuple.Create(28664, 16);
+        Tuple.Create(774, 17);
+        //Mission 4
+        Tuple.Create(33960, 18);
+        Tuple.Create(26848, 19);
+        Tuple.Create(46284, 20);
+        Tuple.Create(46768, 21);
+        //Mission 5
+        Tuple.Create(46284, 22);
+        Tuple.Create(26848, 23);
+        //Mission 6
+        Tuple.Create(3144, 24);
+        Tuple.Create(968, 25);
+        Tuple.Create(2467, 26);
+        //Mission 7
+        Tuple.Create(968, 27);
+        Tuple.Create(26848, 28);
+        Tuple.Create(46284, 29);
+        //Pre Mission 8
+        Tuple.Create(19461, 30);
+        //Mission 8
+        Tuple.Create(58731, 31);
+        Tuple.Create(6656, 32);
+        Tuple.Create(65293, 33);
+        Tuple.Create(43792, 34);
+        Tuple.Create(1408, 35);
+        //Mission 9
+        Tuple.Create(1018, 36);
+        Tuple.Create(1175, 37);
+        Tuple.Create(1018, 38);
+        Tuple.Create(23520, 39);
+        Tuple.Create(19461, 40);
+        //Mission 10
+        Tuple.Create(61584, 41);
+        //Mission 11
+        Tuple.Create(2, 42);
+        Tuple.Create(60736, 43);
+        Tuple.Create(2, 44);
+        Tuple.Create(60736, 45);
+        Tuple.Create(4096, 46);
+        //Mission 12
+        Tuple.Create(32041, 47);
+        Tuple.Create(9735, 48);
+        Tuple.Create(28320, 49);
+        Tuple.Create(504, 50);
+        //Mission 13
+        Tuple.Create(60360, 51);
+        Tuple.Create(3848, 52);
+        Tuple.Create(7941, 53);
+        //Pre Mission 14
+        Tuple.Create(28928, 54);
+        //Mission 14
+        Tuple.Create(49829, 55);
+        Tuple.Create(6919, 56);
+        Tuple.Create(9536, 57);
+        //Mission 15
+        Tuple.Create(40587, 58);
+        Tuple.Create(7943, 59);
+        Tuple.Create(40587, 60);
+        Tuple.Create(15304, 61);
+        Tuple.Create(57344, 62);
+        Tuple.Create(7943, 63);
+        //Mission 16
+        Tuple.Create(57344, 64);
+        Tuple.Create(15304, 65);
+        Tuple.Create(32768, 66);
+        Tuple.Create(2704, 67);
+        Tuple.Create(15910, 68);
+        Tuple.Create(62471, 69);
+        Tuple.Create(42288, 70);
+        Tuple.Create(1027, 71);
+        Tuple.Create(8964, 72);
+        //Mission 17
+        Tuple.Create(256, 73);
+        Tuple.Create(42896, 74);
+        Tuple.Create(6412, 75);
+        Tuple.Create(13590, 76);
+        Tuple.Create(6412, 77);
+        Tuple.Create(58112, 78);
+        //Mission 18
+        Tuple.Create(256, 79);
+        Tuple.Create(19314, 80);
+        Tuple.Create(256, 81);
+        Tuple.Create(7320, 82);
+        Tuple.Create(13806, 83);
+        //Mission 19
+        Tuple.Create(256, 84);
+        Tuple.Create(42624, 85);
+        Tuple.Create(47264, 86);
+        Tuple.Create(31792, 87);
+        Tuple.Create(44022, 88);
+        Tuple.Create(45310, 89);
+        Tuple.Create(44022, 90);
+        Tuple.Create(31792, 91);
+        Tuple.Create(47624, 92);
+        Tuple.Create(1024, 93);
+        Tuple.Create(8694, 94);
+        //Mission 20
+        Tuple.Create(20552, 95);
+        //Mission 21
+        Tuple.Create(4482, 96);
+        Tuple.Create(833, 97);
+        Tuple.Create(169, 98);
+        Tuple.Create(36868, 99);
+        Tuple.Create(4482, 100);
+        //Mission 22
+        Tuple.Create(256, 101);
+        Tuple.Create(4096, 102);
+        //Mission 23
+        Tuple.Create(4482, 103);
+        Tuple.Create(833, 104);
+        Tuple.Create(20552, 105);
+        Tuple.Create(1065, 106);
+        Tuple.Create(8964, 107);
+        //Mission 23 v2
+        Tuple.Create(1024, 108);
+        Tuple.Create(42288, 109);
+        Tuple.Create(62471, 110);
+        Tuple.Create(30217, 111);
+        Tuple.Create(50818, 112);
+    };
+}
+
+update{
+    if (timer.CurrentPhase == TimerPhase.NotRunning)
+    {
+        vars.split = 0;
+    }
 }
 
 start
@@ -31,11 +320,12 @@ start
     //Start the timer upon choosing the difficulty and reset split + chapter back to 0
     if(current.menu != 266 && old.menu == 266){
         vars.split = 0;
-        vars.chapter = 0;
         return true;
     }
 
+    //Starts the timer if you play without a savefile
     if(current.menu != 517 && old.menu == 517 && settings["NoSF"]){
+        vars.split = 0;
         return true;
     }
 }
@@ -47,524 +337,24 @@ split
         return true;
     }
     
-    //M23 frame perfect split
+    //M23 final split
     if(current.cutscene == 0 && old.cutscene == 65537 && current.roomID == 65501 || current.cutscene == 0 && old.cutscene == 65537 && current.roomID == 562){
         return true;
     }    
     
     //DoorSplitter for Costume Dante and SuperDante
-    if(settings["Dante/SuperDante"]){
-        //Pre Chapter 1
-        if((current.roomID == 31616 && old.roomID == 7684 && vars.split == 0)
-        ||
-        //Chapter 1
-        (current.roomID == 56356 && vars.split == 1)
-        ||
-        (current.roomID == 8886 && vars.split == 2)
-        ||
-        (current.roomID == 56356 && vars.split == 3)
-        ||
-        (current.roomID == 7684 && vars.split == 4)
-        ||
-        (current.roomID == 0 && vars.split == 5)
-        ||
-        (current.roomID == 46 && vars.split == 6)
-        ||
-        (current.roomID == 0 && vars.split == 7)
-        ||
-        //Chapter 2
-        (current.roomID == 1152 && vars.split == 8)
-        ||
-        (current.roomID == 7172 && vars.split == 9)
-        ||
-        (current.roomID == 512 && vars.split == 10)
-        ||
-        (current.roomID == 9221 && vars.split == 11)
-        ||
-        (current.roomID == 1152 && vars.split == 12)
-        ||
-        (current.roomID == 7172 && vars.split == 13)
-        //Chapter 3
-        ||
-        (current.roomID == 59282 && vars.split == 14)
-        ||
-        (current.roomID == 35340 && vars.split == 15)
-        ||
-        (current.roomID == 59282 && vars.split == 16)
-        ||
-        (current.roomID == 22 && vars.split == 17)
-        //Chapter 4
-        ||
-        (current.roomID == 512 && vars.split == 18)
-        ||
-        (current.roomID == 0 && vars.split == 19)
-        ||
-        (current.roomID == 32768 && vars.split == 20)
-        ||
-        (current.roomID == 7848 && vars.split == 21)
-        //Chapter 5
-        ||
-        (current.roomID == 32768 && vars.split == 22)
-        ||
-        (current.roomID == 0 && vars.split == 23)
-        //Chapter 6
-        ||
-        (current.roomID == 42436 && vars.split == 24)
-        ||
-        (current.roomID == 8192 && vars.split == 25)
-        ||
-        (current.roomID == 2390 && vars.split == 26)
-        //Chapter 7
-        ||
-        (current.roomID == 8192 && vars.split == 27)
-        ||
-        (current.roomID == 0 && vars.split == 28)
-        ||
-        (current.roomID == 32768 && vars.split == 29)
-        //Pre Chapter 8
-        ||
-        (current.roomID == 12036 && vars.split == 30)
-        //Chapter 8
-        ||
-        (current.roomID == 46256 && vars.split == 31)
-        ||
-        (current.roomID == 27339 && vars.split == 32)
-        ||
-        (current.roomID == 65295 && vars.split == 33)
-        ||
-        (current.roomID == 8886 && vars.split == 34)
-        ||
-        (current.roomID == 56356 && vars.split == 35)
-        //Chapter 9
-        ||
-        (current.roomID == 12292 && vars.split == 36)
-        ||
-        (current.roomID == 2346 && vars.split == 37)
-        ||
-        (current.roomID == 12292 && vars.split == 38)
-        ||
-        (current.roomID == 60608 && vars.split == 39)
-        ||
-        (current.roomID == 13317 && vars.split == 40)
-        //Chapter 10
-        ||
-        (current.roomID == 46336 && vars.split == 41)
-        //Chapter 11
-        ||
-        (current.roomID == 256 && vars.split == 42)
-        ||
-        (current.roomID == 47224 && vars.split == 43)
-        ||
-        (current.roomID == 256 && vars.split == 44)
-        ||
-        (current.roomID == 47224 && vars.split == 45)
-        ||
-        (current.roomID == 4088 && vars.split == 46)
-        //Chapter 12
-        ||
-        (current.roomID == 0 && vars.split == 47)
-        ||
-        (current.roomID == 9732 && vars.split == 48)
-        ||
-        (current.roomID == 51276 && vars.split == 49)
-        ||
-        (current.roomID == 504 && vars.split == 50)
-        //Chapter 13
-        ||
-        (current.roomID == 17584 && vars.split == 51)
-        ||
-        (current.roomID == 64928 && vars.split == 52)
-        ||
-        (current.roomID == 7856 && vars.split == 53)
-        //Pre Chapter 14
-        ||
-        (current.roomID == 20896 && vars.split == 54)
-        //Chapter 14
-        ||
-        (current.roomID == 22477 && vars.split == 55)
-        ||
-        (current.roomID == 6919 && vars.split == 56)
-        ||
-        (current.roomID == 41724 && vars.split == 57)
-        //Chapter 15
-        ||
-        (current.roomID == 15023 && vars.split == 58)
-        ||
-        (current.roomID == 4 && vars.split == 59)
-        ||
-        (current.roomID == 15023 && vars.split == 60)
-        ||
-        (current.roomID == 64345 && vars.split == 61)
-        ||
-        (current.roomID == 45072 && vars.split == 62)
-        ||
-        (current.roomID == 4 && vars.split == 63)
-        //Chapter 16
-        ||
-        (current.roomID == 45072 && vars.split == 64)
-        ||
-        (current.roomID == 64345 && vars.split == 65)
-        ||
-        (current.roomID == 0 && vars.split == 66)
-        ||
-        (current.roomID == 34784 && vars.split == 67)
-        ||
-        (current.roomID == 36414 && vars.split == 68)
-        ||
-        (current.roomID == 27539 && vars.split == 69)
-        ||
-        (current.roomID == 27008 && vars.split == 70)
-        ||
-        (current.roomID == 7685 && vars.split == 71)
-        ||
-        (current.roomID == 24896 && vars.split == 72)
-        //Chapter 17
-        ||
-        (current.roomID == 256 && vars.split == 73)
-        ||
-        (current.roomID == 39338 && vars.split == 74)
-        ||
-        (current.roomID == 4870 && vars.split == 75)
-        ||
-        (current.roomID == 26805 && vars.split == 76)
-        ||
-        (current.roomID == 4870 && vars.split == 77)
-        ||
-        (current.roomID == 4454 && vars.split == 78)
-        //Chapter 18
-        ||
-        (current.roomID == 256 && vars.split == 79)
-        ||
-        (current.roomID == 27403 && vars.split == 80)
-        ||
-        (current.roomID == 256 && vars.split == 81)
-        ||
-        (current.roomID == 21568 && vars.split == 82)
-        ||
-        (current.roomID == 23448 && vars.split == 83)
-        //Chapter 19
-        ||
-        (current.roomID == 256 && vars.split == 84)
-        ||
-        (current.roomID == 57320 && vars.split == 85)
-        ||
-        (current.roomID == 24896 && vars.split == 86)
-        ||
-        (current.roomID == 39700 && vars.split == 87)
-        ||
-        (current.roomID == 4442 && vars.split == 88)
-        ||
-        (current.roomID == 18184 && vars.split == 89)
-        ||
-        (current.roomID == 4442 && vars.split == 90)
-        ||
-        (current.roomID == 39700 && vars.split == 91)
-        ||
-        (current.roomID == 24896 && vars.split == 92)
-        ||
-        (current.roomID == 7685 && vars.split == 93)
-        ||
-        (current.roomID == 8964 && vars.split == 94)
-        //Chapter 20
-        ||
-        (current.roomID == 20408 && vars.split == 95)
-        //Chapter 21
-        ||
-        (current.roomID == 52440 && vars.split == 96)
-        ||
-        (current.roomID == 552 && vars.split == 97)
-        ||
-        (current.roomID == 64483 && vars.split == 98)
-        ||
-        (current.roomID == 14842 && vars.split == 99)
-        ||
-        (current.roomID == 52440 && vars.split == 100)
-        //Chapter 22
-        ||
-        (current.roomID == 256 && vars.split == 101)
-        //Chapter 23
-        ||
-        (current.roomID == 52440 && vars.split == 102)
-        ||
-        (current.roomID == 552 && vars.split == 103)
-        ||
-        (current.roomID == 20408 && vars.split == 104)
-        ||
-        (current.roomID == 1398 && vars.split == 105)
-        ||
-        (current.roomID == 8964 && vars.split == 106)
-        //Chapter 23 v2
-        ||
-        (current.roomID == 7685 && vars.split == 107)
-        ||
-        (current.roomID == 27008 && vars.split == 108)
-        ||
-        (current.roomID == 27539 && vars.split == 109)
-        ||
-        (current.roomID == 3080 && vars.split == 110)
-        ||
-        (current.roomID == 33843 && vars.split == 111)){
+    if(settings["DSD"]){
+        if(current.roomID == 31616 && old.roomID == 7684 && vars.split == 0 || vars.doorSplitDSD.Contains(Tuple.Create(current.roomID, vars.split))){
             vars.split++;
-            return true;
+            return true;        
         }
     }
 
     //DoorSplitter for Legendary Dark Knight Costume
     if(settings["Legendary Dark Knight"]){
-        //Pre Chapter 1
-        if((current.roomID == 12550 && vars.split == 0)
-        ||
-        //Chapter 1
-        (current.roomID == 1408 && vars.split == 1)
-        ||
-        (current.roomID == 43792 && vars.split == 2)
-        ||
-        (current.roomID == 1408 && vars.split == 3)
-        ||
-        (current.roomID == 12550 && vars.split == 4)
-        ||
-        (current.roomID == 3998 && vars.split == 5)
-        ||
-        (current.roomID == 12552 && vars.split == 6)
-        ||
-        (current.roomID == 3998 && vars.split == 7)
-        ||
-        //Chapter 2
-        (current.roomID == 1152 && vars.split == 8)
-        ||
-        (current.roomID == 7684 && vars.split == 9)
-        ||
-        (current.roomID == 33960 && vars.split == 10)
-        ||
-        (current.roomID == 10757 && vars.split == 11)
-        ||
-        (current.roomID == 1152 && vars.split == 12)
-        ||
-        (current.roomID == 7684 && vars.split == 13)
-        //Chapter 3
-        ||
-        (current.roomID == 28664 && vars.split == 14)
-        ||
-        (current.roomID == 57344 && vars.split == 15)
-        ||
-        (current.roomID == 28664 && vars.split == 16)
-        ||
-        (current.roomID == 774 && vars.split == 17)
-        //Chapter 4
-        ||
-        (current.roomID == 33960 && vars.split == 18)
-        ||
-        (current.roomID == 26848 && vars.split == 19)
-        ||
-        (current.roomID == 46284 && vars.split == 20)
-        ||
-        (current.roomID == 46768 && vars.split == 21)
-        //Chapter 5
-        ||
-        (current.roomID == 46284 && vars.split == 22)
-        ||
-        (current.roomID == 26848 && vars.split == 23)
-        //Chapter 6
-        ||
-        (current.roomID == 3144 && vars.split == 24)
-        ||
-        (current.roomID == 968 && vars.split == 25)
-        ||
-        (current.roomID == 2467 && vars.split == 26)
-        //Chapter 7
-        ||
-        (current.roomID == 968 && vars.split == 27)
-        ||
-        (current.roomID == 26848 && vars.split == 28)
-        ||
-        (current.roomID == 46284 && vars.split == 29)
-        //Pre Chapter 8
-        ||
-        (current.roomID == 19461 && vars.split == 30)
-        //Chapter 8
-        ||
-        (current.roomID == 58731 && vars.split == 31)
-        ||
-        (current.roomID == 6656 && vars.split == 32)
-        ||
-        (current.roomID == 65293 && vars.split == 33)
-        ||
-        (current.roomID == 43792 && vars.split == 34)
-        ||
-        (current.roomID == 1408 && vars.split == 35)
-        //Chapter 9
-        ||
-        (current.roomID == 1018 && vars.split == 36)
-        ||
-        (current.roomID == 1175 && vars.split == 37)
-        ||
-        (current.roomID == 1018 && vars.split == 38)
-        ||
-        (current.roomID == 23520 && vars.split == 39)
-        ||
-        (current.roomID == 19461 && vars.split == 40)
-        //Chapter 10
-        ||
-        (current.roomID == 61584 && vars.split == 41)
-        //Chapter 11
-        ||
-        (current.roomID == 2 && vars.split == 42)
-        ||
-        (current.roomID == 60736 && vars.split == 43)
-        ||
-        (current.roomID == 2 && vars.split == 44)
-        ||
-        (current.roomID == 60736 && vars.split == 45)
-        ||
-        (current.roomID == 4096 && vars.split == 46)
-        //Chapter 12
-        ||
-        (current.roomID == 32041 && vars.split == 47)
-        ||
-        (current.roomID == 9735 && vars.split == 48)
-        ||
-        (current.roomID == 28320 && vars.split == 49)
-        ||
-        (current.roomID == 504 && vars.split == 50)
-        //Chapter 13
-        ||
-        (current.roomID == 60360 && vars.split == 51)
-        ||
-        (current.roomID == 3848 && vars.split == 52)
-        ||
-        (current.roomID == 7941 && vars.split == 53)
-        //Pre Chapter 14
-        ||
-        (current.roomID == 28928 && vars.split == 54)
-        //Chapter 14
-        ||
-        (current.roomID == 49829 && vars.split == 55)
-        ||
-        (current.roomID == 6919 && vars.split == 56)
-        ||
-        (current.roomID == 9536 && vars.split == 57)
-        //Chapter 15
-        ||
-        (current.roomID == 40587 && vars.split == 58)
-        ||
-        (current.roomID == 7943 && vars.split == 59)
-        ||
-        (current.roomID == 40587 && vars.split == 60)
-        ||
-        (current.roomID == 15304 && vars.split == 61)
-        ||
-        (current.roomID == 57344 && vars.split == 62)
-        ||
-        (current.roomID == 7943 && vars.split == 63)
-        //Chapter 16
-        ||
-        (current.roomID == 57344 && vars.split == 64)
-        ||
-        (current.roomID == 15304 && vars.split == 65)
-        ||
-        (current.roomID == 32768 && vars.split == 66)
-        ||
-        (current.roomID == 2704 && vars.split == 67)
-        ||
-        (current.roomID == 15910 && vars.split == 68)
-        ||
-        (current.roomID == 62471 && vars.split == 69)
-        ||
-        (current.roomID == 42288 && vars.split == 70)
-        ||
-        (current.roomID == 1024 && vars.split == 71)
-        ||
-        (current.roomID == 8964 && vars.split == 72)
-        //Chapter 17
-        ||
-        (current.roomID == 256 && vars.split == 73)
-        ||
-        (current.roomID == 42896 && vars.split == 74)
-        ||
-        (current.roomID == 6412 && vars.split == 75)
-        ||
-        (current.roomID == 13590 && vars.split == 76)
-        ||
-        (current.roomID == 6412 && vars.split == 77)
-        ||
-        (current.roomID == 58112 && vars.split == 78)
-        //Chapter 18
-        ||
-        (current.roomID == 256 && vars.split == 79)
-        ||
-        (current.roomID == 19314 && vars.split == 80)
-        ||
-        (current.roomID == 256 && vars.split == 81)
-        ||
-        (current.roomID == 7320 && vars.split == 82)
-        ||
-        (current.roomID == 13806 && vars.split == 83)
-        //Chapter 19
-        ||
-        (current.roomID == 256 && vars.split == 84)
-        ||
-        (current.roomID == 42624 && vars.split == 85)
-        ||
-        (current.roomID == 47264 && vars.split == 86)
-        ||
-        (current.roomID == 31792 && vars.split == 87)
-        ||
-        (current.roomID == 44022 && vars.split == 88)
-        ||
-        (current.roomID == 45310 && vars.split == 89)
-        ||
-        (current.roomID == 44022 && vars.split == 90)
-        ||
-        (current.roomID == 31792 && vars.split == 91)
-        ||
-        (current.roomID == 47624 && vars.split == 92)
-        ||
-        (current.roomID == 1024 && vars.split == 93)
-        ||
-        (current.roomID == 8964 && vars.split == 94)
-        //Chapter 20
-        ||
-        (current.roomID == 20552 && vars.split == 95)
-        //Chapter 21
-        ||
-        (current.roomID == 4482 && vars.split == 96)
-        ||
-        (current.roomID == 833 && vars.split == 97)
-        ||
-        (current.roomID == 169 && vars.split == 98)
-        ||
-        (current.roomID == 36868 && vars.split == 99)
-        ||
-        (current.roomID == 4482 && vars.split == 100)
-        //Chapter 22
-        ||
-        (current.roomID == 256 && vars.split == 101)
-        ||
-        (current.roomID == 4096 && vars.split == 102)
-        //Chapter 23
-        ||
-        (current.roomID == 4482 && vars.split == 103)
-        ||
-        (current.roomID == 833 && vars.split == 104)
-        ||
-        (current.roomID == 20552 && vars.split == 105)
-        ||
-        (current.roomID == 1065 && vars.split == 106)
-        ||
-        (current.roomID == 8964 && vars.split == 107)
-        //Chapter 23 v2
-        ||
-        (current.roomID == 1024 && vars.split == 108)
-        ||
-        (current.roomID == 42288 && vars.split == 109)
-        ||
-        (current.roomID == 62471 && vars.split == 110)
-        ||
-        (current.roomID == 30217 && vars.split == 111)
-        ||
-        (current.roomID == 50818 && vars.split == 112)){
+        if(current.roomID == 12550 && vars.split == 0 || vars.doorSplitLDK.Contains(Tuple.Create(current.roomID, vars.split))){
             vars.split++;
-            return true;
+            return true;        
         }
     }
 }
@@ -579,15 +369,14 @@ reset
     }
 }
 
-// isLoading
-// {
-//     //Stop the timer when entering the menu and being on one of the 5 possible menu selections
-//     if(current.pause == 1 || current.pause == 257 || current.pause == 513 || current.pause == 769 || current.pause == 1025){
-//         return true;
-//     }
-//     else{
-//         return false;
-//     }
-// }
-
-
+isLoading
+{
+    //Stop the timer when entering the menu and being on one of the 5 possible menu selections
+    if(current.pause == 1 || current.pause == 257 || current.pause == 513 || current.pause == 769 || current.pause == 1025 || 
+    current.loadingStatus == 1 && current.paused != 1 || current.loadingScreen == 16 && current.paused == 0){
+       return true;
+    }
+    else{
+        return false;
+    }
+}
